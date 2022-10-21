@@ -166,3 +166,10 @@ class AISimModel:
     self.data_avg = data_all / self.ITERATION
     print("time_avg=" + str(self.time_avg) + ", time_max=" + str(time_max) + ", time_min=" + str(time_min))
     print("data_avg=" + str(self.data_avg) + ", data_max=" + str(data_max) + ", data_min=" + str(data_min))
+
+if __name__ == '__main__':
+  model = AISimModel()
+  task = [EDGE, EDGE, EDGE, EDGE, CLOUD, CLOUD, CLOUD, EDGE, EDGE]
+
+  print(str(task))
+  model.simulate(task)
