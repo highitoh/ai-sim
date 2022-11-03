@@ -5,6 +5,20 @@ EDGE_CPU_CLOCK  = 1.50  # エッジ(ARM Cortex-A72)
 
 CLOUD_EDGE_BPS = 12500000   # 100Mbps -> 12.5MB/sec
 
+##### 実行条件 #####
+REQUEST_NUM = 2 * 60 * 60 * 730  # リクエスト数(回数/month)
+
+##### クラウドサービス #####
+CLOUD_SERVICE = "LAMBDA"
+
+EC2_INSTANCE_NUM = 1        # EC2インスタンス数
+EC2_COST_PER_HOUR = 0.0216  # EC2料金単価(USD/hour t4g.small)
+EBS_STORAGE_SIZE = 30       # EBSストレージサイズ(GB)
+EBS_COST_PER_GB = 0.096     # EBS料金単価(USD/GB gp3ストレージ)
+LAMBDA_MEM_SIZE = 0.125     # LAMBDAメモリサイズ(GB 128MB)
+LAMBDA_COST_PER_MEMS = 0.000016667    # LAMBDA料金単価(USD/メモリGB・S)
+LAMBDA_COST_PER_REQ  = 2 * (10 ** -7) # LAMBDA料金単価(USD/リクエスト)
+
 ##### 処理時間パラメータ #####
 
 # 処理時間の分散に与える共通の乗数

@@ -2,8 +2,9 @@ import copy
 import aisim_model
 from aisim_model import EDGE, CLOUD
 
-ALPHA_TIME = 1
+ALPHA_TIME = 0
 ALPHA_DATA = 0
+ALPHA_CHARGE = 1
 
 def optimize():
     model = aisim_model.AISimModel()
@@ -20,12 +21,13 @@ def optimize():
         model.simulate(task)
 
         # Objective Function
-        loss = model.time_avg * ALPHA_TIME + model.data_avg * ALPHA_DATA
+        loss = model.time_avg * ALPHA_TIME + model.data_avg * ALPHA_DATA + model.charge * ALPHA_CHARGE
         if((loss_min > loss) or (loss_min == -1)):
             loss_min = loss
             opt_task = copy.copy(task)
             opt_time_avg = model.time_avg
             opt_data_avg = model.data_avg
+            opt_charge = model.charge
     
     # Print Result
     print("Result:")
@@ -34,6 +36,7 @@ def optimize():
           " Task7:" + getResStr(opt_task[6]) + " Task8:" + getResStr(opt_task[7]) + " Task9:" + getResStr(opt_task[8]))
     print(" loss: " + str(loss_min))
     print(" TimeAvg: " + str(opt_time_avg) + " DataAvg: " + str(opt_data_avg))
+    print(" Charge: " + str(opt_charge))
 
 def getResStr(value):
     return "CLOUD" if (value == CLOUD) else "EDGE"
