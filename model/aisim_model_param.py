@@ -6,10 +6,10 @@ EDGE_CPU_CLOCK  = 1.50  # エッジ(ARM Cortex-A72)
 CLOUD_EDGE_BPS = 12500000   # 100Mbps -> 12.5MB/sec
 
 ##### 実行条件 #####
-REQUEST_NUM = 2 * 60 * 60 * 730  # リクエスト数(回数/month)
+REQUEST_NUM = 0.2 * 60 * 60 * 730  # リクエスト数(回数/month)
 
 ##### クラウドサービス #####
-CLOUD_SERVICE = "LAMBDA"
+CLOUD_SERVICE = "EC2"
 
 EC2_INSTANCE_NUM = 1        # EC2インスタンス数
 EC2_COST_PER_HOUR = 0.0216  # EC2料金単価(USD/hour t4g.small)
