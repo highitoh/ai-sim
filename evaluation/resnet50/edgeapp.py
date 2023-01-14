@@ -28,7 +28,7 @@ from PIL import ImageOps
 print("Import Completed")
 #----- End Import Library -----
 
-url = " https://35bljvkkqh.execute-api.ap-northeast-1.amazonaws.com/test/invoke"
+url = " https://XXXXX.execute-api.ap-northeast-1.amazonaws.com/api"
 port = 8000
 type = "client"
 
