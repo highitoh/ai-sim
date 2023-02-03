@@ -4,6 +4,9 @@ import aisim_model_param as p
 
 import charge_model
 
+# 乱数シードを設定(不要ならコメント)
+random.seed(1)
+
 EDGE = 0
 CLOUD = 1
 
