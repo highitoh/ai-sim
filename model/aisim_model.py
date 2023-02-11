@@ -231,13 +231,13 @@ class AISimModel:
 
       if self.task9 == EDGE:
         t = random.normalvariate(p.TASK_AVG_9, p.TASK_VAR_9)
-        time += t * (p.MY_CPU_BENCHMARK / p.EDGE_CPU_BENCHMARK)
-        task_time[8] += t * (p.MY_CPU_BENCHMARK / p.EDGE_CPU_BENCHMARK)
+        time += t # * (p.MY_CPU_BENCHMARK / p.EDGE_CPU_BENCHMARK)
+        task_time[8] += t # * (p.MY_CPU_BENCHMARK / p.EDGE_CPU_BENCHMARK)
       elif self.task9 == CLOUD:
         t = random.normalvariate(p.TASK_AVG_9, p.TASK_VAR_9)
-        time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        task_time[8] += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        cloud_time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
+        time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
+        task_time[8] += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
+        cloud_time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         if(self.task8 != CLOUD): cloud_access_num += 1
 
       time_all += time
