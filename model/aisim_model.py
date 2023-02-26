@@ -2,9 +2,6 @@ import random
 import numpy as np
 import aisim_model_param as p
 
-import aisim_model_metrics as m
-import charge_model
-
 # 乱数シードを設定(不要ならコメント)
 random.seed(1)
 
@@ -15,7 +12,6 @@ class AISimModel:
 
   ##### シミュレーションパラメータ #####
   ITERATION = 100
-  TASK_NUM = 9
 
   ##### 実行箇所の切り替え #####
   task1 = EDGE
@@ -29,16 +25,10 @@ class AISimModel:
   task9 = EDGE
   #############################
 
-  time_avg = 0
-  data_avg = 0
-  out_data_avg = 0
-  charge = 0
-  comm_time_avg = 0
+  def __init__(self, metrics):
+    self.metrics = metrics
 
   def simulate(self, task):
-
-    cloud_time_avg = 0
-    cloud_access_num = 0
 
     self.task1 = task[0]
     self.task2 = task[1]
@@ -50,14 +40,11 @@ class AISimModel:
     self.task8 = task[7]
     self.task9 = task[8]
 
-    metrics = m.AISimModelMetrics(self.TASK_NUM)
-
     for i in range(self.ITERATION):
       time = 0
       cloud_time = 0
       data = 0
       out_data = 0
-      cloud_access_num = 0
 
       task_time = [0,0,0,0,0,0,0,0,0]
       comm_time = 0
@@ -71,7 +58,7 @@ class AISimModel:
         time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         task_time[0] += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        cloud_access_num += 1
+        self.metrics.cloud_access_num += 1
       
       if (self.task1 == EDGE and self.task2 == CLOUD) or (self.task1 == CLOUD and self.task2 == EDGE):
         data += random.normalvariate(p.COMM_AVG_1_2, p.COMM_VAR_1_2)
@@ -90,7 +77,7 @@ class AISimModel:
         time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         task_time[1] += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        if(self.task1 != CLOUD): cloud_access_num += 1
+        if(self.task1 != CLOUD): self.metrics.cloud_access_num += 1
 
       if (self.task2 == EDGE and self.task3 == CLOUD) or (self.task2 == CLOUD and self.task3 == EDGE):
         data += random.normalvariate(p.COMM_AVG_2_3, p.COMM_VAR_2_3)
@@ -109,7 +96,7 @@ class AISimModel:
         time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         task_time[2] += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        if(self.task2 != CLOUD): cloud_access_num += 1
+        if(self.task2 != CLOUD): self.metrics.cloud_access_num += 1
 
       if (self.task3 == EDGE and self.task4 == CLOUD) or (self.task3 == CLOUD and self.task4 == EDGE):
         data += random.normalvariate(p.COMM_AVG_3_4, p.COMM_VAR_3_4)
@@ -128,7 +115,7 @@ class AISimModel:
         time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         task_time[3] += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        if(self.task3 != CLOUD): cloud_access_num += 1
+        if(self.task3 != CLOUD): self.metrics.cloud_access_num += 1
 
       if (self.task4 == EDGE and self.task5 == CLOUD) or (self.task4 == CLOUD and self.task5 == EDGE):
         data += random.normalvariate(p.COMM_AVG_4_5, p.COMM_VAR_4_5)
@@ -147,7 +134,7 @@ class AISimModel:
         time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         task_time[4] += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        if(self.task4 != CLOUD): cloud_access_num += 1
+        if(self.task4 != CLOUD): self.metrics.cloud_access_num += 1
 
       if (self.task5 == EDGE and self.task6 == CLOUD) or (self.task5 == CLOUD and self.task6 == EDGE):
         data += random.normalvariate(p.COMM_AVG_5_6, p.COMM_VAR_5_6)
@@ -166,7 +153,7 @@ class AISimModel:
         time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         task_time[5] += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        if(self.task5 != CLOUD): cloud_access_num += 1
+        if(self.task5 != CLOUD): self.metrics.cloud_access_num += 1
 
       if (self.task6 == EDGE and self.task7 == CLOUD) or (self.task6 == CLOUD and self.task7 == EDGE):
         data += random.normalvariate(p.COMM_AVG_6_7, p.COMM_VAR_6_7)
@@ -185,7 +172,7 @@ class AISimModel:
         time += t * (p.MY_CPU_BENCHMARK_MULTI / p.CLOUD_CPU_BENCHMARK_MULTI)
         task_time[6] += t * (p.MY_CPU_BENCHMARK_MULTI / p.CLOUD_CPU_BENCHMARK_MULTI)
         cloud_time += t * (p.MY_CPU_BENCHMARK_MULTI / p.CLOUD_CPU_BENCHMARK_MULTI)
-        if(self.task6 != CLOUD): cloud_access_num += 1
+        if(self.task6 != CLOUD): self.metrics.cloud_access_num += 1
 
       if (self.task5 == EDGE and self.task8 == CLOUD) or (self.task5 == CLOUD and self.task8 == EDGE):
         data += random.normalvariate(p.COMM_AVG_5_6, p.COMM_VAR_5_6)
@@ -211,7 +198,7 @@ class AISimModel:
         time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         task_time[7] += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        if(self.task7 != CLOUD): cloud_access_num += 1
+        if(self.task7 != CLOUD): self.metrics.cloud_access_num += 1
 
       if (self.task8 == EDGE and self.task9 == CLOUD) or (self.task8 == CLOUD and self.task9 == EDGE):
         data += random.normalvariate(p.COMM_AVG_8_9, p.COMM_VAR_8_9)
@@ -230,20 +217,10 @@ class AISimModel:
         time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         task_time[8] += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
-        if(self.task8 != CLOUD): cloud_access_num += 1
+        if(self.task8 != CLOUD): self.metrics.cloud_access_num += 1
 
-      metrics.add_record(time, data, out_data, cloud_time, comm_time, task_time)
+      self.metrics.add_record(time, data, out_data, cloud_time, comm_time, task_time)
       # print("[Iteration " + str(i) + "] time=" + str(time) + "s, data=" + str(data))
-
-    self.time_avg = metrics.average("total_time")
-    self.data_avg = metrics.average("total_data")
-    self.out_data_avg = metrics.average("out_data")
-    cloud_time_avg = metrics.average("cloud_time")
-    self.comm_time_avg = metrics.average("comm_time")
-    self.charge = charge_model.calc_charge(self.time_avg, self.data_avg, self.out_data_avg, cloud_access_num, cloud_time_avg)
-
-    metrics.print_summary()
-    print("charge=" + str(self.charge))
 
 if __name__ == '__main__':
   model = AISimModel()

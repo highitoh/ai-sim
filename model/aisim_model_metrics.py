@@ -8,6 +8,7 @@ class AISimModelMetrics:
         self.metrics_list = self.metrics_list + list(map(lambda i: "Task" + str(i), range(1, task_num+1)))
         self.df = pd.DataFrame(columns=self.metrics_list)
         self.task_num = task_num
+        self.cloud_access_num = 0
 
     def add_record(self, total_time, total_data, out_data, cloud_time, comm_time, task_time):
         self.df.loc[len(self.df)] = [total_time, total_data, out_data, cloud_time, comm_time] + task_time
