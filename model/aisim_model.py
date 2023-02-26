@@ -37,10 +37,6 @@ class AISimModel:
 
   def simulate(self, task):
 
-    time_max = 0
-    time_min = 0
-    data_max = 0
-    data_min = 0
     cloud_time_avg = 0
     cloud_access_num = 0
 
@@ -237,15 +233,6 @@ class AISimModel:
         if(self.task8 != CLOUD): cloud_access_num += 1
 
       metrics.add_record(time, data, out_data, cloud_time, comm_time, task_time)
-
-      if (time_max < time) or (time_max == 0): # 0は無効値
-        time_max = time
-      elif (time_min > time) or (time_min == 0): # 0は無効値
-        time_min = time
-      if (data_max < data) or (data_max == 0): # 0は無効値
-        data_max = data
-      elif (data_min > data) or (data_min == 0): # 0は無効値
-        data_min = data
       # print("[Iteration " + str(i) + "] time=" + str(time) + "s, data=" + str(data))
 
     self.time_avg = metrics.average("total_time")
@@ -254,11 +241,9 @@ class AISimModel:
     cloud_time_avg = metrics.average("cloud_time")
     self.comm_time_avg = metrics.average("comm_time")
     self.charge = charge_model.calc_charge(self.time_avg, self.data_avg, self.out_data_avg, cloud_access_num, cloud_time_avg)
-    print("time_avg=" + str(self.time_avg) + ", time_max=" + str(time_max) + ", time_min=" + str(time_min))
-    print("data_avg=" + str(self.data_avg) + ", data_max=" + str(data_max) + ", data_min=" + str(data_min))
+
+    metrics.print_summary()
     print("charge=" + str(self.charge))
-    print("task_time=" + str(list(map(lambda i: metrics.average("Task"+str(i)), range(1, self.TASK_NUM+1)))))
-    print("comm_time_avg=" + str(self.comm_time_avg))
 
 if __name__ == '__main__':
   model = AISimModel()
