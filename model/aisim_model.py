@@ -2,6 +2,7 @@ import random
 import numpy as np
 import aisim_model_param as p
 
+import aisim_model_metrics as m
 import charge_model
 
 # 乱数シードを設定(不要ならコメント)
@@ -14,6 +15,7 @@ class AISimModel:
 
   ##### シミュレーションパラメータ #####
   ITERATION = 100
+  TASK_NUM = 9
 
   ##### 実行箇所の切り替え #####
   task1 = EDGE
@@ -31,24 +33,16 @@ class AISimModel:
   data_avg = 0
   out_data_avg = 0
   charge = 0
-  task_time_avg = np.array([0,0,0,0,0,0,0,0,0], dtype="float64")
   comm_time_avg = 0
 
   def simulate(self, task):
 
-    time_all = 0
-    data_all = 0
     time_max = 0
     time_min = 0
     data_max = 0
     data_min = 0
-    out_data_all = 0
-    cloud_time_all = 0
     cloud_time_avg = 0
     cloud_access_num = 0
-
-    task_time_all = np.array([0,0,0,0,0,0,0,0,0], dtype="float64")
-    comm_time_all = 0
 
     self.task1 = task[0]
     self.task2 = task[1]
@@ -59,6 +53,8 @@ class AISimModel:
     self.task7 = task[6]
     self.task8 = task[7]
     self.task9 = task[8]
+
+    metrics = m.AISimModelMetrics(self.TASK_NUM)
 
     for i in range(self.ITERATION):
       time = 0
@@ -80,7 +76,7 @@ class AISimModel:
         task_time[0] += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         cloud_access_num += 1
-
+      
       if (self.task1 == EDGE and self.task2 == CLOUD) or (self.task1 == CLOUD and self.task2 == EDGE):
         data += random.normalvariate(p.COMM_AVG_1_2, p.COMM_VAR_1_2)
         t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
@@ -240,12 +236,7 @@ class AISimModel:
         cloud_time += t # * (p.MY_CPU_BENCHMARK / p.CLOUD_CPU_BENCHMARK)
         if(self.task8 != CLOUD): cloud_access_num += 1
 
-      time_all += time
-      data_all += data
-      out_data_all += out_data
-      cloud_time_all += cloud_time
-      task_time_all += task_time
-      comm_time_all += comm_time
+      metrics.add_record(time, data, out_data, cloud_time, comm_time, task_time)
 
       if (time_max < time) or (time_max == 0): # 0は無効値
         time_max = time
@@ -257,17 +248,16 @@ class AISimModel:
         data_min = data
       # print("[Iteration " + str(i) + "] time=" + str(time) + "s, data=" + str(data))
 
-    self.time_avg = time_all / self.ITERATION
-    self.data_avg = data_all / self.ITERATION
-    self.out_data_avg = out_data_all / self.ITERATION
-    cloud_time_avg = cloud_time_all / self.ITERATION
-    self.task_time_avg = task_time_all / self.ITERATION
-    self.comm_time_avg = comm_time_all / self.ITERATION
+    self.time_avg = metrics.average("total_time")
+    self.data_avg = metrics.average("total_data")
+    self.out_data_avg = metrics.average("out_data")
+    cloud_time_avg = metrics.average("cloud_time")
+    self.comm_time_avg = metrics.average("comm_time")
     self.charge = charge_model.calc_charge(self.time_avg, self.data_avg, self.out_data_avg, cloud_access_num, cloud_time_avg)
     print("time_avg=" + str(self.time_avg) + ", time_max=" + str(time_max) + ", time_min=" + str(time_min))
     print("data_avg=" + str(self.data_avg) + ", data_max=" + str(data_max) + ", data_min=" + str(data_min))
     print("charge=" + str(self.charge))
-    print("task_time=" + str(self.task_time_avg))
+    print("task_time=" + str(list(map(lambda i: metrics.average("Task"+str(i)), range(1, self.TASK_NUM+1)))))
     print("comm_time_avg=" + str(self.comm_time_avg))
 
 if __name__ == '__main__':
