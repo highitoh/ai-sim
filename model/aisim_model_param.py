@@ -1,3 +1,6 @@
+EDGE = 0
+CLOUD = 1
+
 ##### スペックパラメータ #####
 MY_CPU_CLOCK    = 3.00  # 実験マシン(Intel Core i7-1185G7)
 CLOUD_CPU_CLOCK = 2.50  # クラウドインスタンス(Intel Xeon Processor E5-2680 v3)
