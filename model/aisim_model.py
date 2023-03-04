@@ -2,6 +2,7 @@ import random
 import numpy as np
 
 import aisim_task as t
+import aisim_comm as c
 import aisim_model_param as p
 import aisim_model_metrics as m
 
@@ -25,17 +26,19 @@ class AISimModel:
     self.task8 = t.AISimTask(p.TASK_AVG_8, p.TASK_VAR_8, False, True)
     self.task9 = t.AISimTask(p.TASK_AVG_9, p.TASK_VAR_9, False, False)
 
+    self.comm12 = c.AISimComm(p.COMM_AVG_1_2, p.COMM_VAR_1_2)
+    self.comm23 = c.AISimComm(p.COMM_AVG_2_3, p.COMM_VAR_2_3)
+    self.comm34 = c.AISimComm(p.COMM_AVG_3_4, p.COMM_VAR_3_4)
+    self.comm45 = c.AISimComm(p.COMM_AVG_4_5, p.COMM_VAR_4_5)
+    self.comm56 = c.AISimComm(p.COMM_AVG_5_6, p.COMM_VAR_5_6)
+    self.comm67 = c.AISimComm(p.COMM_AVG_6_7, p.COMM_VAR_6_7)
+    self.comm78 = c.AISimComm(p.COMM_AVG_7_8, p.COMM_VAR_7_8)
+    self.comm89 = c.AISimComm(p.COMM_AVG_8_9, p.COMM_VAR_8_9)
+    self.comm58 = c.AISimComm(p.COMM_AVG_5_6, p.COMM_VAR_5_6) # Same as comm56
+
   def simulate(self, task_location):
 
-    self.task1.location = task_location[0]
-    self.task2.location = task_location[1]
-    self.task3.location = task_location[2]
-    self.task4.location = task_location[3]
-    self.task5.location = task_location[4]
-    self.task6.location = task_location[5]
-    self.task7.location = task_location[6]
-    self.task8.location = task_location[7]
-    self.task9.location = task_location[8]
+    self.update_location(task_location)
 
     for i in range(self.ITERATION):
       time = 0
@@ -54,13 +57,11 @@ class AISimModel:
         cloud_time += t
         self.metrics.cloud_access_num += 1
       
-      if (self.task1.location == p.EDGE and self.task2.location == p.CLOUD) or (self.task1.location == p.CLOUD and self.task2.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_1_2, p.COMM_VAR_1_2)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task1.location == p.CLOUD and self.task2.location == p.EDGE):
-          out_data += data
+      t = self.comm12.get_time()
+      time += t
+      comm_time += t
+      data += self.comm12.get_data_size()
+      out_data += self.comm12.get_cloud_out_data_size()
 
       t = self.task2.get_time()
       time += t
@@ -69,13 +70,11 @@ class AISimModel:
         cloud_time += t
         if(self.task1.location != p.CLOUD): self.metrics.cloud_access_num += 1
 
-      if (self.task2.location == p.EDGE and self.task3.location == p.CLOUD) or (self.task2.location == p.CLOUD and self.task3.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_2_3, p.COMM_VAR_2_3)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task2.location == p.CLOUD and self.task3.location == p.EDGE):
-          out_data += data
+      t = self.comm23.get_time()
+      time += t
+      comm_time += t
+      data += self.comm23.get_data_size()
+      out_data += self.comm23.get_cloud_out_data_size()
 
       t = self.task3.get_time()
       time += t
@@ -84,13 +83,11 @@ class AISimModel:
         cloud_time += t
         if(self.task2.location != p.CLOUD): self.metrics.cloud_access_num += 1
 
-      if (self.task3.location == p.EDGE and self.task4.location == p.CLOUD) or (self.task3.location == p.CLOUD and self.task4.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_3_4, p.COMM_VAR_3_4)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task3.location == p.CLOUD and self.task4.location == p.EDGE):
-          out_data += data
+      t = self.comm34.get_time()
+      time += t
+      comm_time += t
+      data += self.comm34.get_data_size()
+      out_data += self.comm34.get_cloud_out_data_size()
 
       t = self.task4.get_time()
       time += t
@@ -99,13 +96,11 @@ class AISimModel:
         cloud_time += t
         if(self.task3.location != p.CLOUD): self.metrics.cloud_access_num += 1
 
-      if (self.task4.location == p.EDGE and self.task5.location == p.CLOUD) or (self.task4.location == p.CLOUD and self.task5.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_4_5, p.COMM_VAR_4_5)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task4.location == p.CLOUD and self.task5.location == p.EDGE):
-          out_data += data
+      t = self.comm45.get_time()
+      time += t
+      comm_time += t
+      data += self.comm45.get_data_size()
+      out_data += self.comm45.get_cloud_out_data_size()
 
       t = self.task5.get_time()
       time += t
@@ -114,13 +109,11 @@ class AISimModel:
         cloud_time += t
         if(self.task4.location != p.CLOUD): self.metrics.cloud_access_num += 1
 
-      if (self.task5.location == p.EDGE and self.task6.location == p.CLOUD) or (self.task5.location == p.CLOUD and self.task6.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_5_6, p.COMM_VAR_5_6)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task5.location == p.CLOUD and self.task6.location == p.EDGE):
-          out_data += data
+      t = self.comm56.get_time()
+      time += t
+      comm_time += t
+      data += self.comm56.get_data_size()
+      out_data += self.comm56.get_cloud_out_data_size()
 
       t = self.task6.get_time()
       time += t
@@ -129,13 +122,11 @@ class AISimModel:
         cloud_time += t
         if(self.task5.location != p.CLOUD): self.metrics.cloud_access_num += 1
 
-      if (self.task6.location == p.EDGE and self.task7.location == p.CLOUD) or (self.task6.location == p.CLOUD and self.task7.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_6_7, p.COMM_VAR_6_7)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task6.location == p.CLOUD and self.task7.location == p.EDGE):
-          out_data += data
+      t = self.comm67.get_time()
+      time += t
+      comm_time += t
+      data += self.comm67.get_data_size()
+      out_data += self.comm67.get_cloud_out_data_size()
 
       t = self.task7.get_time()
       time += t
@@ -144,20 +135,16 @@ class AISimModel:
         cloud_time += t
         if(self.task6.location != p.CLOUD): self.metrics.cloud_access_num += 1
 
-      if (self.task5.location == p.EDGE and self.task8.location == p.CLOUD) or (self.task5.location == p.CLOUD and self.task8.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_5_6, p.COMM_VAR_5_6)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task5.location == p.CLOUD and self.task8.location == p.EDGE):
-          out_data += data
-      if (self.task7.location == p.EDGE and self.task8.location == p.CLOUD) or (self.task7.location == p.CLOUD and self.task8.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_7_8, p.COMM_VAR_7_8)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task7.location == p.CLOUD and self.task8.location == p.EDGE):
-          out_data += data
+      t = self.comm58.get_time()
+      time += t
+      comm_time += t
+      data += self.comm58.get_data_size()
+      out_data += self.comm58.get_cloud_out_data_size()
+      t = self.comm78.get_time()
+      time += t
+      comm_time += t
+      data += self.comm78.get_data_size()
+      out_data += self.comm78.get_cloud_out_data_size()
 
       t = self.task8.get_time()
       time += t
@@ -166,13 +153,11 @@ class AISimModel:
         cloud_time += t
         if(self.task7.location != p.CLOUD): self.metrics.cloud_access_num += 1
 
-      if (self.task8.location == p.EDGE and self.task9.location == p.CLOUD) or (self.task8.location == p.CLOUD and self.task9.location == p.EDGE):
-        data += random.normalvariate(p.COMM_AVG_8_9, p.COMM_VAR_8_9)
-        t = random.normalvariate(data / p.CLOUD_EDGE_BPS, data / p.CLOUD_EDGE_BPS * p.LT_SIGMA_GAIN)
-        time += t
-        comm_time += t
-        if(self.task8.location == p.CLOUD and self.task9.location == p.EDGE):
-          out_data += data
+      t = self.comm89.get_time()
+      time += t
+      comm_time += t
+      data += self.comm89.get_data_size()
+      out_data += self.comm89.get_cloud_out_data_size()
 
       t = self.task9.get_time()
       time += t
@@ -183,6 +168,37 @@ class AISimModel:
 
       self.metrics.add_record(time, data, out_data, cloud_time, comm_time, task_time)
       # print("[Iteration " + str(i) + "] time=" + str(time) + "s, data=" + str(data))
+
+  def update_location(self, task_location):
+    self.task1.location = task_location[0]
+    self.task2.location = task_location[1]
+    self.task3.location = task_location[2]
+    self.task4.location = task_location[3]
+    self.task5.location = task_location[4]
+    self.task6.location = task_location[5]
+    self.task7.location = task_location[6]
+    self.task8.location = task_location[7]
+    self.task9.location = task_location[8]
+
+    self.comm12.location_from = task_location[0]
+    self.comm23.location_from = task_location[1]
+    self.comm34.location_from = task_location[2]
+    self.comm45.location_from = task_location[3]
+    self.comm56.location_from = task_location[4]
+    self.comm67.location_from = task_location[5]
+    self.comm78.location_from = task_location[6]
+    self.comm89.location_from = task_location[7]
+    self.comm58.location_from = task_location[4]
+
+    self.comm12.location_to = task_location[1]
+    self.comm23.location_to = task_location[2]
+    self.comm34.location_to = task_location[3]
+    self.comm45.location_to = task_location[4]
+    self.comm56.location_to = task_location[5]
+    self.comm67.location_to = task_location[6]
+    self.comm78.location_to = task_location[7]
+    self.comm89.location_to = task_location[8]
+    self.comm58.location_to = task_location[7]
 
 if __name__ == '__main__':
   task_location = [p.EDGE, p.CLOUD, p.CLOUD, p.CLOUD, p.CLOUD, p.CLOUD, p.CLOUD, p.CLOUD, p.EDGE]
