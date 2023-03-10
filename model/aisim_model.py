@@ -1,13 +1,9 @@
-import random
 import numpy as np
 
 import aisim_task as t
 import aisim_comm as c
 import aisim_model_param as p
 import aisim_model_metrics as m
-
-# 乱数シードを設定(不要ならコメント)
-random.seed(1)
 
 class TrialResult:
 
@@ -38,7 +34,8 @@ class AISimModel:
   ##### シミュレーションパラメータ #####
   ITERATION = 100
 
-  def __init__(self, metrics):
+  def __init__(self, metrics, seed=None):    
+    # Constitute Workflow Model
     self.metrics = metrics
     self.task1 = t.AISimTask(0, p.TASK_AVG_1, p.TASK_VAR_1, False, False)
     self.task2 = t.AISimTask(1, p.TASK_AVG_2, p.TASK_VAR_2, False, True)

@@ -1,4 +1,5 @@
 import copy
+import random
 import aisim_model
 import aisim_model_metrics as m
 import aisim_model_charge as c
@@ -10,9 +11,12 @@ ALPHA_CHARGE = 1
 
 def optimize():
     task_location = [p.EDGE, p.EDGE, p.EDGE, p.EDGE, p.EDGE, p.EDGE, p.EDGE, p.EDGE, p.EDGE]
-
     loss_min = -1
     iter_max = 2 ** (len(task_location) - 2)
+
+    # Set Random Seed
+    random.seed(1)
+
     for i in range(iter_max):
         # Change Location
         for j in range(1, len(task_location)-1): # Fix EDGE for task1 and task9
