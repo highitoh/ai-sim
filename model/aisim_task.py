@@ -3,13 +3,16 @@ import aisim_model_param as p
 
 class AISimTask:
 
-    location = p.EDGE
+    idx = 0
     time_avg = 0
     time_var = 0
     is_multithread = False
     adjustment = True
 
-    def __init__(self, time_avg, time_var, is_multithread, adjustment):
+    location = p.EDGE
+
+    def __init__(self, idx, time_avg, time_var, is_multithread, adjustment):
+        self.idx = idx
         self.time_avg = time_avg
         self.time_var = time_var
         self.is_multithread = is_multithread

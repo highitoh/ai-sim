@@ -19,10 +19,10 @@ class TrialResult:
     self.comm_time = 0
     self.task_time = [0,0,0,0,0,0,0,0,0]
 
-  def exec_task(self, idx, task):
+  def exec_task(self, task):
     t = task.get_time()
     self.time += t
-    self.task_time[idx] += t
+    self.task_time[task.idx] += t
     if task.location == p.CLOUD:
       self.cloud_time += t
     
@@ -40,15 +40,15 @@ class AISimModel:
 
   def __init__(self, metrics):
     self.metrics = metrics
-    self.task1 = t.AISimTask(p.TASK_AVG_1, p.TASK_VAR_1, False, False)
-    self.task2 = t.AISimTask(p.TASK_AVG_2, p.TASK_VAR_2, False, True)
-    self.task3 = t.AISimTask(p.TASK_AVG_3, p.TASK_VAR_3, False, False)
-    self.task4 = t.AISimTask(p.TASK_AVG_4, p.TASK_VAR_4, False, True)
-    self.task5 = t.AISimTask(p.TASK_AVG_5, p.TASK_VAR_5, False, True)
-    self.task6 = t.AISimTask(p.TASK_AVG_6, p.TASK_VAR_6, False, True)
-    self.task7 = t.AISimTask(p.TASK_AVG_7, p.TASK_VAR_7, True, True)
-    self.task8 = t.AISimTask(p.TASK_AVG_8, p.TASK_VAR_8, False, True)
-    self.task9 = t.AISimTask(p.TASK_AVG_9, p.TASK_VAR_9, False, False)
+    self.task1 = t.AISimTask(0, p.TASK_AVG_1, p.TASK_VAR_1, False, False)
+    self.task2 = t.AISimTask(1, p.TASK_AVG_2, p.TASK_VAR_2, False, True)
+    self.task3 = t.AISimTask(2, p.TASK_AVG_3, p.TASK_VAR_3, False, False)
+    self.task4 = t.AISimTask(3, p.TASK_AVG_4, p.TASK_VAR_4, False, True)
+    self.task5 = t.AISimTask(4, p.TASK_AVG_5, p.TASK_VAR_5, False, True)
+    self.task6 = t.AISimTask(5, p.TASK_AVG_6, p.TASK_VAR_6, False, True)
+    self.task7 = t.AISimTask(6, p.TASK_AVG_7, p.TASK_VAR_7, True, True)
+    self.task8 = t.AISimTask(7, p.TASK_AVG_8, p.TASK_VAR_8, False, True)
+    self.task9 = t.AISimTask(8, p.TASK_AVG_9, p.TASK_VAR_9, False, False)
 
     self.comm12 = c.AISimComm(p.COMM_AVG_1_2, p.COMM_VAR_1_2)
     self.comm23 = c.AISimComm(p.COMM_AVG_2_3, p.COMM_VAR_2_3)
@@ -99,46 +99,47 @@ class AISimModel:
 
       result = TrialResult()
 
-      result.exec_task(0, self.task1)
+      result.exec_task(self.task1)
       
       result.exec_comm(self.comm12)
 
-      result.exec_task(1, self.task2)
+      result.exec_task(self.task2)
 
       result.exec_comm(self.comm23)
 
-      result.exec_task(2, self.task3)
+      result.exec_task(self.task3)
 
       result.exec_comm(self.comm34)
 
-      result.exec_task(3, self.task4)
+      result.exec_task(self.task4)
 
       result.exec_comm(self.comm45)
 
-      result.exec_task(4, self.task5)
+      result.exec_task(self.task5)
 
       result.exec_comm(self.comm56)
 
-      result.exec_task(5, self.task6)
+      result.exec_task(self.task6)
 
       result.exec_comm(self.comm67)
 
-      result.exec_task(6, self.task7)
+      result.exec_task(self.task7)
 
       result.exec_comm(self.comm58)
 
       result.exec_comm(self.comm78)
 
-      result.exec_task(7, self.task8)
+      result.exec_task(self.task8)
 
       result.exec_comm(self.comm89)
 
-      result.exec_task(8, self.task9)
+      result.exec_task(self.task9)
 
       self.metrics.add_record(result.time, result.data, result.out_data, result.cloud_time, result.comm_time, result.task_time)
       # print("[Iteration " + str(i) + "] time=" + str(time) + "s, data=" + str(data))
 
   def calc_static_metrics(self):
+    # Calculate Cloud Access Count
     self.metrics.cloud_access_num = 0
     if self.task1.location == p.CLOUD: self.metrics.cloud_access_num += 1
     if (self.task1.location != p.CLOUD and self.task2.location == p.CLOUD): self.metrics.cloud_access_num += 1
