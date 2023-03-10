@@ -9,6 +9,30 @@ import aisim_model_metrics as m
 # 乱数シードを設定(不要ならコメント)
 random.seed(1)
 
+class TrialResult:
+
+  def __init__(self):
+    self.time = 0
+    self.cloud_time = 0
+    self.data = 0
+    self.out_data = 0
+    self.comm_time = 0
+    self.task_time = [0,0,0,0,0,0,0,0,0]
+
+  def exec_task(self, idx, task):
+    t = task.get_time()
+    self.time += t
+    self.task_time[idx] += t
+    if task.location == p.CLOUD:
+      self.cloud_time += t
+    
+  def exec_comm(self, comm):
+      t = comm.get_time()
+      self.time += t
+      self.comm_time += t
+      self.data += comm.get_data_size()
+      self.out_data += comm.get_cloud_out_data_size()
+
 class AISimModel:
 
   ##### シミュレーションパラメータ #####
@@ -35,139 +59,6 @@ class AISimModel:
     self.comm78 = c.AISimComm(p.COMM_AVG_7_8, p.COMM_VAR_7_8)
     self.comm89 = c.AISimComm(p.COMM_AVG_8_9, p.COMM_VAR_8_9)
     self.comm58 = c.AISimComm(p.COMM_AVG_5_6, p.COMM_VAR_5_6) # Same as comm56
-
-  def simulate(self, task_location):
-
-    self.update_location(task_location)
-
-    for i in range(self.ITERATION):
-      time = 0
-      cloud_time = 0
-      data = 0
-      out_data = 0
-      self.metrics.cloud_access_num = 0
-
-      task_time = [0,0,0,0,0,0,0,0,0]
-      comm_time = 0
-
-      t = self.task1.get_time()
-      time += t
-      task_time[0] += t
-      if self.task1.location == p.CLOUD:
-        cloud_time += t
-        self.metrics.cloud_access_num += 1
-      
-      t = self.comm12.get_time()
-      time += t
-      comm_time += t
-      data += self.comm12.get_data_size()
-      out_data += self.comm12.get_cloud_out_data_size()
-
-      t = self.task2.get_time()
-      time += t
-      task_time[1] += t
-      if self.task2.location == p.CLOUD:
-        cloud_time += t
-        if(self.task1.location != p.CLOUD): self.metrics.cloud_access_num += 1
-
-      t = self.comm23.get_time()
-      time += t
-      comm_time += t
-      data += self.comm23.get_data_size()
-      out_data += self.comm23.get_cloud_out_data_size()
-
-      t = self.task3.get_time()
-      time += t
-      task_time[2] += t
-      if self.task3.location == p.CLOUD:
-        cloud_time += t
-        if(self.task2.location != p.CLOUD): self.metrics.cloud_access_num += 1
-
-      t = self.comm34.get_time()
-      time += t
-      comm_time += t
-      data += self.comm34.get_data_size()
-      out_data += self.comm34.get_cloud_out_data_size()
-
-      t = self.task4.get_time()
-      time += t
-      task_time[3] += t
-      if self.task4.location == p.CLOUD:
-        cloud_time += t
-        if(self.task3.location != p.CLOUD): self.metrics.cloud_access_num += 1
-
-      t = self.comm45.get_time()
-      time += t
-      comm_time += t
-      data += self.comm45.get_data_size()
-      out_data += self.comm45.get_cloud_out_data_size()
-
-      t = self.task5.get_time()
-      time += t
-      task_time[4] += t
-      if self.task5.location == p.CLOUD:
-        cloud_time += t
-        if(self.task4.location != p.CLOUD): self.metrics.cloud_access_num += 1
-
-      t = self.comm56.get_time()
-      time += t
-      comm_time += t
-      data += self.comm56.get_data_size()
-      out_data += self.comm56.get_cloud_out_data_size()
-
-      t = self.task6.get_time()
-      time += t
-      task_time[5] += t
-      if self.task6.location == p.CLOUD:
-        cloud_time += t
-        if(self.task5.location != p.CLOUD): self.metrics.cloud_access_num += 1
-
-      t = self.comm67.get_time()
-      time += t
-      comm_time += t
-      data += self.comm67.get_data_size()
-      out_data += self.comm67.get_cloud_out_data_size()
-
-      t = self.task7.get_time()
-      time += t
-      task_time[6] += t
-      if self.task7.location == p.CLOUD:
-        cloud_time += t
-        if(self.task6.location != p.CLOUD): self.metrics.cloud_access_num += 1
-
-      t = self.comm58.get_time()
-      time += t
-      comm_time += t
-      data += self.comm58.get_data_size()
-      out_data += self.comm58.get_cloud_out_data_size()
-      t = self.comm78.get_time()
-      time += t
-      comm_time += t
-      data += self.comm78.get_data_size()
-      out_data += self.comm78.get_cloud_out_data_size()
-
-      t = self.task8.get_time()
-      time += t
-      task_time[7] += t
-      if self.task8.location == p.CLOUD:
-        cloud_time += t
-        if(self.task7.location != p.CLOUD): self.metrics.cloud_access_num += 1
-
-      t = self.comm89.get_time()
-      time += t
-      comm_time += t
-      data += self.comm89.get_data_size()
-      out_data += self.comm89.get_cloud_out_data_size()
-
-      t = self.task9.get_time()
-      time += t
-      task_time[8] += t
-      if self.task9 == p.CLOUD:
-        cloud_time += t
-        if(self.task8.location != p.CLOUD): self.metrics.cloud_access_num += 1
-
-      self.metrics.add_record(time, data, out_data, cloud_time, comm_time, task_time)
-      # print("[Iteration " + str(i) + "] time=" + str(time) + "s, data=" + str(data))
 
   def update_location(self, task_location):
     self.task1.location = task_location[0]
@@ -199,6 +90,65 @@ class AISimModel:
     self.comm78.location_to = task_location[7]
     self.comm89.location_to = task_location[8]
     self.comm58.location_to = task_location[7]
+
+  def simulate(self, task_location):
+
+    self.update_location(task_location)
+
+    for i in range(self.ITERATION):
+
+      result = TrialResult()
+
+      result.exec_task(0, self.task1)
+      
+      result.exec_comm(self.comm12)
+
+      result.exec_task(1, self.task2)
+
+      result.exec_comm(self.comm23)
+
+      result.exec_task(2, self.task3)
+
+      result.exec_comm(self.comm34)
+
+      result.exec_task(3, self.task4)
+
+      result.exec_comm(self.comm45)
+
+      result.exec_task(4, self.task5)
+
+      result.exec_comm(self.comm56)
+
+      result.exec_task(5, self.task6)
+
+      result.exec_comm(self.comm67)
+
+      result.exec_task(6, self.task7)
+
+      result.exec_comm(self.comm58)
+
+      result.exec_comm(self.comm78)
+
+      result.exec_task(7, self.task8)
+
+      result.exec_comm(self.comm89)
+
+      result.exec_task(8, self.task9)
+
+      self.metrics.add_record(result.time, result.data, result.out_data, result.cloud_time, result.comm_time, result.task_time)
+      # print("[Iteration " + str(i) + "] time=" + str(time) + "s, data=" + str(data))
+
+  def calc_static_metrics(self):
+    self.metrics.cloud_access_num = 0
+    if self.task1.location == p.CLOUD: self.metrics.cloud_access_num += 1
+    if (self.task1.location != p.CLOUD and self.task2.location == p.CLOUD): self.metrics.cloud_access_num += 1
+    if (self.task2.location != p.CLOUD and self.task3.location == p.CLOUD): self.metrics.cloud_access_num += 1
+    if (self.task3.location != p.CLOUD and self.task4.location == p.CLOUD): self.metrics.cloud_access_num += 1
+    if (self.task4.location != p.CLOUD and self.task5.location == p.CLOUD): self.metrics.cloud_access_num += 1
+    if (self.task5.location != p.CLOUD and self.task6.location == p.CLOUD): self.metrics.cloud_access_num += 1
+    if (self.task6.location != p.CLOUD and self.task7.location == p.CLOUD): self.metrics.cloud_access_num += 1
+    if (self.task7.location != p.CLOUD and self.task8.location == p.CLOUD): self.metrics.cloud_access_num += 1
+    if (self.task8.location != p.CLOUD and self.task9.location == p.CLOUD): self.metrics.cloud_access_num += 1
 
 if __name__ == '__main__':
   task_location = [p.EDGE, p.CLOUD, p.CLOUD, p.CLOUD, p.CLOUD, p.CLOUD, p.CLOUD, p.CLOUD, p.EDGE]

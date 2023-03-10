@@ -14,6 +14,7 @@ def optimize():
     loss_min = -1
     iter_max = 2 ** (len(task_location) - 2)
     for i in range(iter_max):
+        # Change Location
         for j in range(1, len(task_location)-1): # Fix EDGE for task1 and task9
             task_location[j] = p.CLOUD if i & (1 << (j-1)) else p.EDGE
 
@@ -24,6 +25,9 @@ def optimize():
         # Run Simulation
         print("[Iterate " + str(i) + "]")
         model.simulate(task_location)
+
+        # Calculate Static Metrics
+        model.calc_static_metrics()
 
         # Calculate Charge
         charge = c.AISimModelCharge()
