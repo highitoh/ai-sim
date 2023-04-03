@@ -1,8 +1,9 @@
 import numpy as np
 
+import aisim_model_param as p
+
 import aisim_task as t
 import aisim_comm as c
-import aisim_model_param as p
 import aisim_model_metrics as m
 
 class TrialResult:

@@ -35,6 +35,8 @@ def optimize():
 
         # Calculate Charge
         charge = c.AISimModelCharge()
+        charge.cloud_service = "LAMBDA"
+        charge.request_num = 0.2 * 60 * 60 * 730 # リクエスト数(回数/month)
         charge.time_avg = metrics.average("total_time")
         charge.data_avg = metrics.average("total_data")
         charge.out_data_avg = metrics.average("out_data")
