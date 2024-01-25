@@ -1,24 +1,31 @@
 EDGE = 0
 CLOUD = 1
+GW = 2
 
 ##### スペックパラメータ #####
 MY_CPU_CLOCK    = 3.00  # 実験マシン(Intel Core i7-1185G7)
 CLOUD_CPU_CLOCK = 2.50  # クラウドインスタンス(Intel Xeon Processor E5-2680 v3)
 EDGE_CPU_CLOCK  = 1.50  # エッジ(ARM Cortex-A72)
+GW_CPU_CLOCK  = 1.90    # エッジ(ARM Cortex-A57W)
 
 MY_CPU_CORES    = 2     # 実験マシンのコア割当て数
 CLOUD_CPU_CORES = 3     # クラウドインスタンスのコア割当て数
 EDGE_CPU_CORES  = 4     # エッジのコア割当て数
+GW_CPU_CORES  = 4       # ゲートウェイのコア割当て数
 
 MY_CPU_BENCHMARK    = 35743 / 4   # 実験マシンCPUのベンチマーク(1コア相当)
 CLOUD_CPU_BENCHMARK = 62262 / 12  # クラウドCPUのベンチマーク(1コア相当)
 EDGE_CPU_BENCHMARK  = 5676 /  4   # エッジCPUのベンチマーク(1コア相当)
+GW_CPU_BENCHMARK    = 12249 / 4   # ゲートウェイCPUのベンチマーク(1コア相当)
 
 MY_CPU_BENCHMARK_MULTI = MY_CPU_BENCHMARK * MY_CPU_CORES          # 実験マシンCPUのベンチマーク(マルチスレッド)
 CLOUD_CPU_BENCHMARK_MULTI = CLOUD_CPU_BENCHMARK * CLOUD_CPU_CORES # クラウドCPUのベンチマーク(マルチスレッド)
 EDGE_CPU_BENCHMARK_MULTI = EDGE_CPU_BENCHMARK * EDGE_CPU_CORES    # エッジCPUのベンチマーク(マルチスレッド)
+GW_CPU_BENCHMARK_MULTI = GW_CPU_BENCHMARK * GW_CPU_CORES    # エッジCPUのベンチマーク(マルチスレッド)
 
 CLOUD_EDGE_BPS = 12500000   # 100Mbps -> 12.5MB/sec
+CLOUD_GW_BPS = 12500000   # 100Mbps -> 12.5MB/sec
+GW_EDGE_BPS = 12500000   # 100Mbps -> 12.5MB/sec
 
 ##### 処理時間パラメータ #####
 
